@@ -16,7 +16,7 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class MainActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,8 +32,8 @@ public class MainActivity extends AppCompatActivity {
         tvRegisterhere.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent registerIntent=new Intent(MainActivity.this,RegisterActivity.class);
-                MainActivity.this.startActivity(registerIntent);
+                Intent registerIntent=new Intent(LoginActivity.this,RegisterActivity.class);
+                LoginActivity.this.startActivity(registerIntent);
             }
         });
 
@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         AlertDialog.Builder builderresponse = new AlertDialog.Builder
-                                (MainActivity.this);
+                                (LoginActivity.this);
                         builderresponse.setMessage(response)
                                 .setNegativeButton("Újrapróbálkozás",null)
                                 .create().show();
@@ -60,17 +60,17 @@ public class MainActivity extends AppCompatActivity {
                                 String name=jsonObject.getString("name");
                                 int age=jsonObject.getInt("age");
 
-                                Intent intent=new Intent(MainActivity.this,
+                                Intent intent=new Intent(LoginActivity.this,
                                         UserAreaActivity.class);
                                 intent.putExtra("name",name);
                                 intent.putExtra("username",username);
                                 intent.putExtra("age",age);
 
-                                MainActivity.this.startActivity(intent);
+                                LoginActivity.this.startActivity(intent);
                             }
                             else {
                                 AlertDialog.Builder builder = new AlertDialog.Builder
-                                        (MainActivity.this);
+                                        (LoginActivity.this);
                                 builder.setMessage("Nem sikerült bejelentkezni.")
                                         .setNegativeButton("Újrapróbálkozás",null)
                                         .create().show();
@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                 };
 
                 LoginRequest loginRequest=new LoginRequest(username,password,listener);
-                RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
+                RequestQueue queue = Volley.newRequestQueue(LoginActivity.this);
                 queue.add(loginRequest);
             }
         });

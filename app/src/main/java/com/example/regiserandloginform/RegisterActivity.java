@@ -5,11 +5,9 @@ import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -52,7 +50,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
                                         Intent intent=new Intent(RegisterActivity.this,
-                                                MainActivity.class);
+                                                LoginActivity.class);
                                         RegisterActivity.this.startActivity(intent);
                                     }
                                 })
@@ -67,7 +65,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                             if (success){
                                 Intent intent=new Intent(RegisterActivity.this,
-                                        MainActivity.class);
+                                        LoginActivity.class);
                                 RegisterActivity.this.startActivity(intent);
                             }
                             else {
