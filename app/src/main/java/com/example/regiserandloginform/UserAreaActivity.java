@@ -35,6 +35,10 @@ public class UserAreaActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent=new Intent(UserAreaActivity.this,
                         NavigationActivity.class);
+                intent.putExtra("name",name);
+                intent.putExtra("username",username);
+                intent.putExtra("age",age);
+
                 UserAreaActivity.this.startActivity(intent);
 
             }

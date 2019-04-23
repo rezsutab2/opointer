@@ -1,6 +1,5 @@
 package com.example.regiserandloginform;
 
-import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -16,29 +15,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationRequest;
-
-import java.util.ArrayList;
-
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private Location location;
-    private GoogleApiClient googleApiClient;
-    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
-    private LocationRequest locationRequest;
-    private static final long UPDATE_INTERVAL = 5000, FASTEST_INTERVAL = 5000; // = 5 seconds
-
-    private ArrayList<String> permissionsToRequest;
-    private ArrayList<String> permissionsRejected = new ArrayList<>();
-    private ArrayList<String> permissions = new ArrayList<>();
-
-    private static final int ALL_PERMISSIONS_RESULT = 1011;
+    User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        user=new User(getIntent().getStringExtra("name"));
+
         setContentView(R.layout.activity_navigation);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -59,12 +46,10 @@ public class NavigationActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
 
-        ContactFragment contactFragment=new ContactFragment();
+        MapFragment mapFragment=new MapFragment();
         FragmentManager manager = getSupportFragmentManager();
 
-        manager.beginTransaction().replace(R.id.mainLayout,contactFragment).commit();
-
-
+        manager.beginTransaction().replace(R.id.mainLayout,mapFragment).commit();
     }
 
     @Override
@@ -106,7 +91,7 @@ public class NavigationActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_addpointer) {
-
+            MapFragment.placePointer(user);
         } else if (id == R.id.nav_personaldata) {
 
         } else if (id == R.id.nav_friendlist) {

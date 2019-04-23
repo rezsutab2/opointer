@@ -46,11 +46,6 @@ public class LoginActivity extends AppCompatActivity {
                 Response.Listener<String> listener=new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        AlertDialog.Builder builderresponse = new AlertDialog.Builder
-                                (LoginActivity.this);
-                        builderresponse.setMessage(response)
-                                .setNegativeButton("Újrapróbálkozás",null)
-                                .create().show();
                         try {
                             JSONObject jsonObject=new JSONObject(response);
 
