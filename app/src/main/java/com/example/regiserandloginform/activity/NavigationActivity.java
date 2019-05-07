@@ -43,6 +43,7 @@ public class NavigationActivity extends AppCompatActivity
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
+        user= (User) getIntent().getSerializableExtra("user");
 
         MapFragment mapFragment=new MapFragment();
         FragmentManager manager = getSupportFragmentManager();
@@ -89,12 +90,12 @@ public class NavigationActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_addpointer) {
-            user= (User) getIntent().getSerializableExtra("user");
             MapFragment.placePointer(user);
         } else if (id == R.id.nav_personaldata) {
 
         } else if (id == R.id.nav_friendlist) {
             Intent intent=new Intent(this, FriendListActivity.class);
+            intent.putExtra("user_id",user.getUser_id());
             NavigationActivity.this.startActivity(intent);
         } else if (id == R.id.nav_events) {
 

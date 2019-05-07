@@ -1,4 +1,4 @@
-package com.example.regiserandloginform.request;
+package com.example.regiserandloginform.utilities;
 
 import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;

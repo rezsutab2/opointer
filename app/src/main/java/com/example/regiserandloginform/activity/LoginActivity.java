@@ -10,7 +10,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
 import com.example.regiserandloginform.R;
-import com.example.regiserandloginform.request.LoginRequest;
+import com.example.regiserandloginform.utilities.LoginRequest;
 import com.example.regiserandloginform.pojo.User;
 
 import org.json.JSONException;
@@ -56,7 +56,7 @@ public class LoginActivity extends AppCompatActivity {
                         String birthdate = jsonResponse.getString("birthdate");
 
                         Intent intent = new Intent(LoginActivity.this, NavigationActivity.class);
-                        User user=new User(userid,username,password,name,birthdate);
+                        User user=new User(userid,username,name,birthdate);
                         intent.putExtra("user",user);
                         LoginActivity.this.startActivity(intent);
                     } else {
