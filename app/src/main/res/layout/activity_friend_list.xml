@@ -47,7 +47,7 @@
         tools:text="Barátaid" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/btnSendFriendRequest"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
