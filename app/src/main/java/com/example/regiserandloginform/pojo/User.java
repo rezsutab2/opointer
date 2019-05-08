@@ -1,5 +1,7 @@
 package com.example.regiserandloginform.pojo;
 
+import android.content.Intent;
+
 import java.io.Serializable;
 
 public class User implements Serializable {
@@ -25,6 +27,14 @@ public class User implements Serializable {
 
     public long getUser_id() {
         return user_id;
+    }
+
+    public void setUserSerializedExtra(Intent intent){
+        intent.putExtra("user",this);
+    }
+
+    public void getUserSerializedExtra(Intent intent){
+        intent.getSerializableExtra("user");
     }
 
     @Override

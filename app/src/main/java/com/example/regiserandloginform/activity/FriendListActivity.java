@@ -2,22 +2,19 @@ package com.example.regiserandloginform.activity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.GestureDetector;
+import android.text.InputType;
 import android.view.Gravity;
 import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewConfiguration;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -39,6 +36,8 @@ public class FriendListActivity extends AppCompatActivity {
     Animation textClick;
     Button btnSendFriendRequest;
     RequestQueue queue;
+    String user2name;
+    User loggedInUser;
     long your_id;
 
     @Override
@@ -49,15 +48,34 @@ public class FriendListActivity extends AppCompatActivity {
         layoutFriends=findViewById(R.id.layoutFriends);
         textClick = new AlphaAnimation(1.0f, 0.4f);
         textClick.setDuration(1000);
+        textClick.setRepeatCount(1);
 
         queue=Volley.newRequestQueue(this);
 
-        long your_id=getIntent().getLongExtra("user_id",29);
+        btnSendFriendRequest=findViewById(R.id.btnSendFriendRequest);
 
-        friendship();
+        loggedInUser= (User) getIntent().getSerializableExtra("user");
+        your_id=loggedInUser.getUser_id();
+
+        friendship(your_id);
+
+        btnSendFriendRequest.setOnClickListener(v -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Barát felvétele");
+            final EditText input = new EditText(this);
+            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            builder.setView(input);
+            builder.setPositiveButton("OK", (dialog, which) -> {
+                user2name = input.getText().toString();
+                startRequest(your_id,user2name);
+                Toast.makeText(FriendListActivity.this,"Barátkérelem elküldve!",Toast.LENGTH_LONG);
+            });
+            builder.setNegativeButton("Mégse", (dialog, which) -> dialog.cancel());
+            builder.show();
+        });
     }
 
-    private void friendship(){
+    private void friendship(long your_id){
 
         String urlFriendship="https://o-pointer.000webhostapp.com/friendship.php?user_id="+your_id;
 
@@ -68,11 +86,11 @@ public class FriendListActivity extends AppCompatActivity {
             for (int i=0;i<response.length();i++){
                 try {
                     JSONObject jsonObject=response.getJSONObject(i);
-                    long user_id=jsonObject.getLong("user_id");
+                    long user2_id=jsonObject.getLong("user_id");
                     String username=jsonObject.getString("username");
                     String real_name=jsonObject.getString("name");
                     String birthdate=jsonObject.getString("birthdate");
-                    User user=new User(user_id,username,real_name,birthdate);
+                    User user=new User(user2_id,username,real_name,birthdate);
                     TextView textView=new TextView(this);
                     if (jsonObject.getInt("isapproved")==1){
                         layoutFriends.addView(textView);
@@ -102,10 +120,15 @@ public class FriendListActivity extends AppCompatActivity {
 
                             @Override
                             public void onAnimationEnd(Animation animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animation animation) {
                                 DialogInterface.OnClickListener dialogClickListener = (dialog, button) -> {
                                     switch (button){
                                         case DialogInterface.BUTTON_POSITIVE:
-
+                                            acceptRequest(user2_id);
                                             break;
 
                                         case DialogInterface.BUTTON_NEGATIVE:
@@ -120,11 +143,6 @@ public class FriendListActivity extends AppCompatActivity {
                                 builder.setMessage("Elfogadod, vagy elutasítod a felkérést?").setPositiveButton("Igen", dialogClickListener)
                                         .setNegativeButton("Nem", dialogClickListener).setNeutralButton("Mégse",dialogClickListener).show();
                             }
-
-                            @Override
-                            public void onAnimationRepeat(Animation animation) {
-
-                            }
                         });
                         textView.setOnTouchListener((v, event) -> {
                             switch(event.getAction() & MotionEvent.ACTION_MASK){
@@ -138,7 +156,7 @@ public class FriendListActivity extends AppCompatActivity {
                             }
                             return true;
                         });
-                        //Textview hátterek a https://uigradients.com -ról
+
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -154,8 +172,39 @@ public class FriendListActivity extends AppCompatActivity {
         requestQueue.add(jsonArrayRequest);
     }
 
-    private void startRequest(long userid,long user2id){
-        String urlSendRequest="https://o-pointer.000webhostapp.com/friendship.php";
+    private void startRequest(long userid,String user2name){
+        String urlSendRequest="https://o-pointer.000webhostapp.com/sendrequest.php";
+
+        StringRequest postRequest = new StringRequest(Request.Method.POST, urlSendRequest,
+                response ->{
+                    AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+                    alertDialog.setMessage("Kérelem elküldve");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            (dialog, which) -> dialog.dismiss());
+                    alertDialog.show();
+                }
+                ,
+                error -> {
+                }) {
+
+            @Override
+            protected Map<String, String> getParams()
+            {
+                Map<String, String>  params = new HashMap<>();
+                params.put("userid", String.valueOf(userid));
+                params.put("user2name", user2name);
+                return params;
+            }
+        };
+        queue.add(postRequest);
+        finish();
+        overridePendingTransition(0, 0);
+        startActivity(getIntent());
+        overridePendingTransition(0, 0);
+    }
+
+    private void acceptRequest(long user2_id){
+        String urlSendRequest="https://o-pointer.000webhostapp.com/acceptrequest.php";
 
         StringRequest postRequest = new StringRequest(Request.Method.POST, urlSendRequest,
                 response ->{
@@ -167,17 +216,15 @@ public class FriendListActivity extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams()
             {
-
-                //USER2NAME KEEEEEEEEEEEEEEEELLLLLLLLLL
                 Map<String, String>  params = new HashMap<>();
-                params.put("userid", String.valueOf(userid));
-                params.put("user2id", String.valueOf(user2id));
+                params.put("user2_id", String.valueOf(user2_id));
                 return params;
             }
         };
         queue.add(postRequest);
-        Intent intent=new Intent(this,LoginActivity.class);
-        startActivity(intent);
+        finish();
+        overridePendingTransition(0, 0);
+        startActivity(getIntent());
+        overridePendingTransition(0, 0);
     }
-
 }

@@ -95,8 +95,9 @@ public class NavigationActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_friendlist) {
             Intent intent=new Intent(this, FriendListActivity.class);
-            intent.putExtra("user_id",user.getUser_id());
-            NavigationActivity.this.startActivity(intent);
+            User user= (User) getIntent().getSerializableExtra("user");
+            user.setUserSerializedExtra(intent);
+            startActivity(intent);
         } else if (id == R.id.nav_events) {
 
         }

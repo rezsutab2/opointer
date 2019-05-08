@@ -39,8 +39,8 @@ public class LoginActivity extends AppCompatActivity {
 
             Response.Listener<String> responseListener = response -> {
                     new AlertDialog.Builder(this)
-                            .setTitle("xxx")
-                            .setMessage(response)
+                            .setTitle("Bejelentkezési hiba!")
+                            .setMessage("Hibás jelszó!")
                             .setPositiveButton(android.R.string.yes, (dialog, which) -> {
                             })
                             .setIcon(android.R.drawable.ic_dialog_alert)
@@ -55,10 +55,10 @@ public class LoginActivity extends AppCompatActivity {
                         String name = jsonResponse.getString("name");
                         String birthdate = jsonResponse.getString("birthdate");
 
-                        Intent intent = new Intent(LoginActivity.this, NavigationActivity.class);
+                        Intent intent = new Intent(this, NavigationActivity.class);
                         User user=new User(userid,username,name,birthdate);
-                        intent.putExtra("user",user);
-                        LoginActivity.this.startActivity(intent);
+                        user.setUserSerializedExtra(intent);
+                        startActivity(intent);
                     } else {
                         AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
                         builder.setMessage("Login Failed")
