@@ -36,6 +36,7 @@ public class MapFragment extends SupportMapFragment
     LocationRequest locationRequest;
     GoogleApiClient googleApiClient;
     static Marker yourLocationsMarker;
+    static Marker friendlyMarker;
     static double latitude,longitude;
     static LatLng yourLocation;
 
@@ -130,9 +131,18 @@ public class MapFragment extends SupportMapFragment
         markerOptions.position(yourLocation);
         markerOptions.title(user.getUsername());
         markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_mymarker));
+        //http://www.myiconfinder.com/icon/news-brand-place-base-basic2-gps-location-map-maps-marker-navigation-pin-location/866
         yourLocationsMarker = googleMap.addMarker(markerOptions);
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(yourLocation,11));
         return yourLocation;
+    }
+
+    public static void friendPointer(LatLng friendsLocation,String username,String message){
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(friendsLocation);
+        markerOptions.title(username).snippet(message);
+        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_mymarker));
+        friendlyMarker = googleMap.addMarker(markerOptions);
     }
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;

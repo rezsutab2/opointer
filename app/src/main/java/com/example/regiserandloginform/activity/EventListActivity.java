@@ -1,6 +1,7 @@
 package com.example.regiserandloginform.activity;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,13 +15,17 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.regiserandloginform.R;
+import com.example.regiserandloginform.fragment.MapFragment;
 import com.example.regiserandloginform.pojo.Event;
 import com.example.regiserandloginform.pojo.EventInfo;
 import com.example.regiserandloginform.pojo.PointerLocation;
 import com.example.regiserandloginform.pojo.User;
+import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 public class EventListActivity extends AppCompatActivity {
 
@@ -33,7 +38,6 @@ public class EventListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_list);
-
         yourself= (User) getIntent().getSerializableExtra("yourself");
         your_id=yourself.getUser_id();
         layoutEvents=findViewById(R.id.layoutEvents);
@@ -68,15 +72,12 @@ public class EventListActivity extends AppCompatActivity {
                 textView.setTextColor(Color.parseColor("#ffffff"));
                 textView.setBackgroundResource(R.drawable.rainbow_blue);
                 textView.setGravity(Gravity.CENTER|Gravity.CENTER);
+                LatLng latLng=new LatLng(latitude,longitude);
+                MapFragment.friendPointer(latLng,username,message);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage(response.toString())
-                    .setNegativeButton("Retry", null)
-                    .create()
-                    .show();
         }, error -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage(error.getMessage())

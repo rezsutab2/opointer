@@ -25,6 +25,8 @@ import com.example.regiserandloginform.fragment.MapFragment;
 import com.example.regiserandloginform.R;
 import com.example.regiserandloginform.pojo.User;
 import com.google.android.gms.maps.model.LatLng;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,6 +62,8 @@ public class NavigationActivity extends AppCompatActivity
         FragmentManager manager = getSupportFragmentManager();
 
         manager.beginTransaction().replace(R.id.mainLayout,mapFragment).commit();
+
+
     }
 
     @Override
