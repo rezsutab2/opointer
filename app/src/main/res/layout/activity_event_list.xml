@@ -5,10 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/design_default_color_primary"
-    tools:context=".activity.FriendListActivity">
+    tools:context=".activity.EventListActivity">
 
     <ScrollView
-        android:id="@+id/scrollViewFriends"
+        android:id="@+id/scrollViewEvents"
         android:layout_width="283dp"
         android:layout_height="420dp"
         android:layout_marginTop="8dp"
@@ -21,14 +21,14 @@
         app:layout_constraintVertical_bias="0.498">
 
         <LinearLayout
-            android:id="@+id/layoutFriends"
+            android:id="@+id/layoutEvents"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" />
     </ScrollView>
 
     <TextView
-        android:id="@+id/textViewFriends"
+        android:id="@+id/textViewEvents"
         android:layout_width="380dp"
         android:layout_height="54dp"
         android:layout_marginStart="8dp"
@@ -36,7 +36,7 @@
         android:layout_marginEnd="8dp"
         android:background="@color/colorPrimaryDark"
         android:fontFamily="sans-serif-black"
-        android:text="Barátaid"
+        android:text="Események"
         android:textAlignment="center"
         android:textColor="@android:color/holo_green_dark"
         android:textSize="36sp"
@@ -44,21 +44,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Barátaid" />
-
-    <Button
-        android:id="@+id/btnSendFriendRequest"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="Barát hozzáadása"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scrollViewFriends"
-        app:layout_constraintVertical_bias="0.369" />
+        tools:text="Események" />
 
 </android.support.constraint.ConstraintLayout>

@@ -6,13 +6,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.regiserandloginform.R;
-import com.example.regiserandloginform.utilities.LoginRequest;
 import com.example.regiserandloginform.pojo.User;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -36,46 +36,52 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(v -> {
             final String username = etUsername.getText().toString();
             final String password = etPassword.getText().toString();
+            login(username,password);
+        });
+    }
 
-            Response.Listener<String> responseListener = response -> {
-                    new AlertDialog.Builder(this)
-                            .setTitle("Bejelentkezési hiba!")
-                            .setMessage("Hibás jelszó!")
-                            .setPositiveButton(android.R.string.yes, (dialog, which) -> {
-                            })
-                            .setIcon(android.R.drawable.ic_dialog_alert)
-                            .show();
+    private void login(String username, String password){
+        String urlLogin = "https://o-pointer.000webhostapp.com/login.php?username="+username+"&password="+password;
 
+        RequestQueue requestQueue =  Volley.newRequestQueue(this);
+        JsonArrayRequest jsonArrayRequest=new JsonArrayRequest(Request.Method.GET, urlLogin,
+                null, response -> {
+            for (int i=0;i<response.length();i++){
                 try {
-                    JSONObject jsonResponse = new JSONObject(response);
-                    boolean executed = jsonResponse.getBoolean("executed");
-
-                    if (executed) {
-                        int userid = jsonResponse.getInt("user_id");
-                        String name = jsonResponse.getString("name");
-                        String birthdate = jsonResponse.getString("birthdate");
-
-                        Intent intent = new Intent(this, NavigationActivity.class);
-                        User user=new User(userid,username,name,birthdate);
-                        user.setUserSerializedExtra(intent);
+                    JSONObject jsonObject=response.getJSONObject(i);
+                    boolean verified=jsonObject.getBoolean("verified");
+                    if (verified){
+                        long user_id=jsonObject.getLong("user_id");
+                        String name=jsonObject.getString("name");
+                        String birthdate=jsonObject.getString("birthdate");
+                        User yourself=new User(user_id,username,name,birthdate);
+                        Intent intent=new Intent(this,NavigationActivity.class);
+                        intent.putExtra("yourself",yourself);
                         startActivity(intent);
-                    } else {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
-                        builder.setMessage("Login Failed")
-                                .setNegativeButton("Retry", null)
-                                .create()
-                                .show();
-                    }
 
+                    }
+                    else {
+                        new AlertDialog.Builder(this)
+                                .setTitle("Jelszó probléma")
+                                .setMessage("Hibás jelszót adott meg!")
+                                .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                                })
+                                .setIcon(android.R.drawable.ic_dialog_alert)
+                                .show();
+                        return;
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-            };
-
-            LoginRequest loginRequest = new LoginRequest(username, password, responseListener);
-            RequestQueue queue = Volley.newRequestQueue(LoginActivity.this);
-            queue.add(loginRequest);
-        });
+            }
+        }, error -> new AlertDialog.Builder(this)
+                .setTitle("Hiba!")
+                .setMessage("Nem létező felhasználónév!")
+                .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show());
+        requestQueue.add(jsonArrayRequest);
     }
 
 }

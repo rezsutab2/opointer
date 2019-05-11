@@ -1,25 +1,20 @@
 package com.example.regiserandloginform.fragment;
 
-
 import android.Manifest;
 import android.app.AlertDialog;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.location.Location;
-
-import com.example.regiserandloginform.R;
-import com.example.regiserandloginform.pojo.User;
-import com.google.android.gms.location.LocationListener;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.widget.Toast;
-
+import com.example.regiserandloginform.R;
+import com.example.regiserandloginform.pojo.User;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -37,12 +32,12 @@ public class MapFragment extends SupportMapFragment
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
 
-    static GoogleMap mGoogleMap;
-    LocationRequest mLocationRequest;
-    GoogleApiClient mGoogleApiClient;
-    static Location mLastLocation;
-    static Marker mCurrLocationMarker;
-    User user;
+    static GoogleMap googleMap;
+    LocationRequest locationRequest;
+    GoogleApiClient googleApiClient;
+    static Marker yourLocationsMarker;
+    static double latitude,longitude;
+    static LatLng yourLocation;
 
     @Override
     public void onResume() {
@@ -53,7 +48,7 @@ public class MapFragment extends SupportMapFragment
 
     private void setUpMapIfNeeded() {
 
-        if (mGoogleMap == null) {
+        if (googleMap == null) {
             getMapAsync(this);
         }
     }
@@ -61,52 +56,52 @@ public class MapFragment extends SupportMapFragment
     public void onPause() {
         super.onPause();
 
-        if (mGoogleApiClient != null) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+        if (googleApiClient != null) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
         }
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap)
     {
-        mGoogleMap=googleMap;
-        mGoogleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        this.googleMap=googleMap;
+        googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(getActivity(),
                     Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
                 buildGoogleApiClient();
-                mGoogleMap.setMyLocationEnabled(true);
+                googleMap.setMyLocationEnabled(true);
             } else {
                 checkLocationPermission();
             }
         }
         else {
             buildGoogleApiClient();
-            mGoogleMap.setMyLocationEnabled(true);
+            googleMap.setMyLocationEnabled(true);
         }
     }
 
     protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+        googleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
-        mGoogleApiClient.connect();
+        googleApiClient.connect();
     }
 
     @Override
     public void onConnected(Bundle bundle) {
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(1000);
-        mLocationRequest.setFastestInterval(1000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        locationRequest = new LocationRequest();
+        locationRequest.setInterval(1000);
+        locationRequest.setFastestInterval(1000);
+        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         if (ContextCompat.checkSelfPermission(getActivity(),
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+            LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
         }
     }
 
@@ -116,26 +111,28 @@ public class MapFragment extends SupportMapFragment
     @Override
     public void onLocationChanged(Location location)
     {
-        mLastLocation = location;
-
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-
+        if(googleMap!=null){
+            googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+            latitude=location.getLatitude();
+            longitude=location.getLongitude();
+            yourLocation=new LatLng(latitude,longitude);
+        }
     }
 
-    public static void placePointer(User user){
-        if (mCurrLocationMarker != null) {
-            mCurrLocationMarker.remove();
+    public static LatLng placePointer(User user){
+        if (yourLocationsMarker != null) {
+            yourLocationsMarker.remove();
         }
 
-        LatLng latLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
         MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng);
+        markerOptions.position(yourLocation);
         markerOptions.title(user.getUsername());
         markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_mymarker));
-        mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,11));
+        yourLocationsMarker = googleMap.addMarker(markerOptions);
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(yourLocation,11));
+        return yourLocation;
     }
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
@@ -147,8 +144,8 @@ public class MapFragment extends SupportMapFragment
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
 
                 new AlertDialog.Builder(getActivity())
-                        .setTitle("Location Permission Needed")
-                        .setMessage("This app needs the Location permission, please accept to use location functionality")
+                        .setTitle("Helyadatok szükségeltetnek.")
+                        .setMessage("Az alkalmazás megfelelő működéséhez engedélyezze a helyadatok használatát!")
                         .setPositiveButton("OK", (dialogInterface, i) -> ActivityCompat.requestPermissions(getActivity(),
                                 new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                                 MY_PERMISSIONS_REQUEST_LOCATION ))
@@ -166,7 +163,7 @@ public class MapFragment extends SupportMapFragment
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+        String permissions[], int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_LOCATION: {
                 if (grantResults.length > 0
@@ -176,14 +173,14 @@ public class MapFragment extends SupportMapFragment
                             Manifest.permission.ACCESS_FINE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED) {
 
-                        if (mGoogleApiClient == null) {
+                        if (googleApiClient == null) {
                             buildGoogleApiClient();
                         }
-                        mGoogleMap.setMyLocationEnabled(true);
+                        googleMap.setMyLocationEnabled(true);
                     }
 
                 } else {
-                    Toast.makeText(getActivity(), "permission denied", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), "Hozzáférés megtagadva.", Toast.LENGTH_LONG).show();
                 }
                 return;
             }

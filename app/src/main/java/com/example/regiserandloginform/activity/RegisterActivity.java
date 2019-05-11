@@ -1,22 +1,18 @@
 package com.example.regiserandloginform.activity;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.regiserandloginform.R;
-
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,6 +20,11 @@ public class RegisterActivity extends AppCompatActivity {
 
     EditText etUsername, etPass, etPass2, etName, etBirthdate;
     Button btnRegisterFinal;
+    DatePickerDialog datePickerDialog;
+    Calendar calendar;
+    int year;
+    int month;
+    int day;
 
     String urlRegister = "https://o-pointer.000webhostapp.com/register.php";
 
@@ -40,6 +41,17 @@ public class RegisterActivity extends AppCompatActivity {
         etName = findViewById(R.id.etRegisterRealname);
         etBirthdate = findViewById(R.id.etRegisterBirthdate);
 
+        etBirthdate.setOnClickListener(v -> {
+            calendar = Calendar.getInstance();
+            year = calendar.get(Calendar.YEAR);
+            month = calendar.get(Calendar.MONTH);
+            day = calendar.get(Calendar.DAY_OF_MONTH);
+            datePickerDialog = new DatePickerDialog(RegisterActivity.this,
+                    (datePicker, year, month, day) ->
+                            etBirthdate.setText(year + "-" + (month + 1) + "-" + day), year, month, day);
+            datePickerDialog.show();
+        });
+
         queue = Volley.newRequestQueue(this);
 
         btnRegisterFinal = findViewById(R.id.btnRegisterFinal);
@@ -51,13 +63,6 @@ public class RegisterActivity extends AppCompatActivity {
         StringRequest postRequest = new StringRequest(Request.Method.POST, urlRegister,
                 response ->{
                     if(response.length()>1000){
-                        new AlertDialog.Builder(this)
-                                .setTitle("xxx")
-                                .setMessage(response)
-                                .setPositiveButton(android.R.string.yes, (dialog, which) -> {
-                                })
-                                .setIcon(android.R.drawable.ic_dialog_alert)
-                                .show();
                     }
                 }
                         ,

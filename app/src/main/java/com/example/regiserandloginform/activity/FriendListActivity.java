@@ -15,7 +15,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonArrayRequest;
@@ -23,21 +22,19 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.regiserandloginform.R;
 import com.example.regiserandloginform.pojo.User;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.HashMap;
 import java.util.Map;
 
 public class FriendListActivity extends AppCompatActivity {
 
-    LinearLayout layoutFriends;
-    Animation textClick;
-    Button btnSendFriendRequest;
-    RequestQueue queue;
-    String user2name;
-    User loggedInUser;
+    private LinearLayout layoutFriends;
+    private Animation textClick;
+    private Button btnSendFriendRequest;
+    private RequestQueue queue;
+    private String user2name;
+    private User yourself;
     long your_id;
 
     @Override
@@ -54,8 +51,8 @@ public class FriendListActivity extends AppCompatActivity {
 
         btnSendFriendRequest=findViewById(R.id.btnSendFriendRequest);
 
-        loggedInUser= (User) getIntent().getSerializableExtra("user");
-        your_id=loggedInUser.getUser_id();
+        yourself= (User) getIntent().getSerializableExtra("yourself");
+        your_id=yourself.getUser_id();
 
         friendship(your_id);
 
@@ -63,12 +60,12 @@ public class FriendListActivity extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Barát felvétele");
             final EditText input = new EditText(this);
-            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_CLASS_TEXT);
             builder.setView(input);
             builder.setPositiveButton("OK", (dialog, which) -> {
                 user2name = input.getText().toString();
                 startRequest(your_id,user2name);
-                Toast.makeText(FriendListActivity.this,"Barátkérelem elküldve!",Toast.LENGTH_LONG);
+                Toast.makeText(this,"Barátkérelem elküldve!",Toast.LENGTH_LONG).show();
             });
             builder.setNegativeButton("Mégse", (dialog, which) -> dialog.cancel());
             builder.show();
@@ -79,7 +76,7 @@ public class FriendListActivity extends AppCompatActivity {
 
         String urlFriendship="https://o-pointer.000webhostapp.com/friendship.php?user_id="+your_id;
 
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        queue = Volley.newRequestQueue(this);
 
         JsonArrayRequest jsonArrayRequest=new JsonArrayRequest(Request.Method.GET, urlFriendship,
                 null, response -> {
@@ -132,7 +129,7 @@ public class FriendListActivity extends AppCompatActivity {
                                             break;
 
                                         case DialogInterface.BUTTON_NEGATIVE:
-
+                                            declineRequest(your_id,user2_id);
                                             break;
                                         case DialogInterface.BUTTON_NEUTRAL:
 
@@ -169,7 +166,7 @@ public class FriendListActivity extends AppCompatActivity {
                     .create()
                     .show();
         });
-        requestQueue.add(jsonArrayRequest);
+        queue.add(jsonArrayRequest);
     }
 
     private void startRequest(long userid,String user2name){
@@ -217,6 +214,32 @@ public class FriendListActivity extends AppCompatActivity {
             protected Map<String, String> getParams()
             {
                 Map<String, String>  params = new HashMap<>();
+                params.put("user2_id", String.valueOf(user2_id));
+                return params;
+            }
+        };
+        queue.add(postRequest);
+        finish();
+        overridePendingTransition(0, 0);
+        startActivity(getIntent());
+        overridePendingTransition(0, 0);
+    }
+
+    private void declineRequest(long user_id,long user2_id){
+        String urlSendRequest="https://o-pointer.000webhostapp.com/declinerequest.php";
+
+        StringRequest postRequest = new StringRequest(Request.Method.POST, urlSendRequest,
+                response ->{
+                }
+                ,
+                error -> {
+                }) {
+
+            @Override
+            protected Map<String, String> getParams()
+            {
+                Map<String, String>  params = new HashMap<>();
+                params.put("user_id",String.valueOf(user_id));
                 params.put("user2_id", String.valueOf(user2_id));
                 return params;
             }
