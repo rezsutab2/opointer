@@ -1,15 +1,11 @@
 package com.example.regiserandloginform.activity;
 
-import android.app.AlertDialog;
-import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
-import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonArrayRequest;
@@ -21,11 +17,8 @@ import com.example.regiserandloginform.pojo.EventInfo;
 import com.example.regiserandloginform.pojo.PointerLocation;
 import com.example.regiserandloginform.pojo.User;
 import com.google.android.gms.maps.model.LatLng;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
 
 public class EventListActivity extends AppCompatActivity {
 
@@ -79,11 +72,6 @@ public class EventListActivity extends AppCompatActivity {
                 }
             }
         }, error -> {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage(error.getMessage())
-                    .setNegativeButton("Retry", null)
-                    .create()
-                    .show();
         });
         queue.add(jsonArrayRequest);
     }

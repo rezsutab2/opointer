@@ -1,6 +1,7 @@
 package com.example.regiserandloginform.activity;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -25,8 +26,6 @@ import com.example.regiserandloginform.fragment.MapFragment;
 import com.example.regiserandloginform.R;
 import com.example.regiserandloginform.pojo.User;
 import com.google.android.gms.maps.model.LatLng;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,9 +43,6 @@ public class NavigationActivity extends AppCompatActivity
         setContentView(R.layout.activity_navigation);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(view -> Snackbar.make(view, "", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show());
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -68,30 +64,21 @@ public class NavigationActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
+        DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+            switch (which){
+                case DialogInterface.BUTTON_POSITIVE:
+                    finishAffinity();
+                    System.exit(0);
+                    break;
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+                case DialogInterface.BUTTON_NEGATIVE:
+                    break;
+            }
+        };
 
-        getMenuInflater().inflate(R.menu.navigation, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Biztosan kilépsz az alkalmazásból?").setPositiveButton("Igen", dialogClickListener)
+                .setNegativeButton("Nem", dialogClickListener).show();
     }
 
     @Override
