@@ -7,10 +7,9 @@ $username=$_POST["username"];
 $password=$_POST["password"];
 $password=password_hash($password,PASSWORD_DEFAULT);
 $name=$_POST["name"];
-$birthdate=$_POST["birthdate"];
 
 //Változóban tárolom a SQL parancsot. A bemenő értékeket a változókkal határozom meg.
-$sqlquery="INSERT INTO user (username,password,name,birthdate) values('$username','$password','$name','$birthdate');";
+$sqlquery="INSERT INTO user (username,password,name) values('$username','$password','$name');";
 
 //A parancs lefuttatához megadom a MySQL kapcsolatot és magát a parancsot is.
 //Ha ezt a parancsot nem tudja véghezvinni valamiért, akkor kiíratom a hiba okát.

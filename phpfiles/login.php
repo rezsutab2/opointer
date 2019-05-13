@@ -2,8 +2,8 @@
 <?php
     require_once('config.php');
     
-    $username = $_GET["username"];
-    $password = $_GET["password"];
+    $username = $_POST["username"];
+    $password = $_POST["password"];
     
     $stmt = mysqli_prepare($connect, "SELECT * FROM user WHERE username = ?");
     
@@ -15,21 +15,18 @@
     
     $response = array();
     
-    for ($i = 0; $i < $stmt->num_rows; $i++)
-        {
-        $response[$i] = [];
     
-        $stmt->bind_result($response[$i]['user_id'],$response[$i]['username'],$response[$i]['password'],$response[$i]['name'],$response[$i]['birthdate']);
+    $stmt->bind_result($response['user_id'],$response['username'],$response['password'],$response['name']);
             
-            while($stmt->fetch()){
-                if(password_verify($password,$response[$i]['password'])){
-                $response[$i]["verified"]=true;
-                }
-                else{
-                    $response[$i]["verified"] = false;
-                }
-            }
+    while($stmt->fetch()){
+        if(password_verify($password,$response['password'])){
+            $response["verified"]=true;
         }
+        else{
+            $response["verified"] = false;
+        }
+    }
+    
     
 
     echo json_encode($response);

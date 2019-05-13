@@ -1,7 +1,6 @@
 package com.example.regiserandloginform.activity;
 
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,21 +11,16 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.regiserandloginform.R;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    EditText etUsername, etPass, etPass2, etName, etBirthdate;
+    EditText etUsername, etPass, etPass2, etName;
     Button btnRegisterFinal;
-    DatePickerDialog datePickerDialog;
-    Calendar calendar;
-    int year;
-    int month;
-    int day;
 
     String urlRegister = "https://o-pointer.000webhostapp.com/register.php";
+    String pass, pass2, username, name;
 
     RequestQueue queue;
 
@@ -39,38 +33,58 @@ public class RegisterActivity extends AppCompatActivity {
         etPass = findViewById(R.id.etRegisterPass);
         etPass2 = findViewById(R.id.etRegisterPass2);
         etName = findViewById(R.id.etRegisterRealname);
-        etBirthdate = findViewById(R.id.etRegisterBirthdate);
-
-        etBirthdate.setOnClickListener(v -> {
-            calendar = Calendar.getInstance();
-            year = calendar.get(Calendar.YEAR);
-            month = calendar.get(Calendar.MONTH);
-            day = calendar.get(Calendar.DAY_OF_MONTH);
-            datePickerDialog = new DatePickerDialog(RegisterActivity.this,
-                    (datePicker, year, month, day) ->
-                            etBirthdate.setText(year + "-" + (month + 1) + "-" + day), year, month, day);
-            datePickerDialog.show();
-        });
 
         queue = Volley.newRequestQueue(this);
 
         btnRegisterFinal = findViewById(R.id.btnRegisterFinal);
 
-        btnRegisterFinal.setOnClickListener(v -> startRequest());
+        btnRegisterFinal.setOnClickListener(v ->{
+            startRequest();
+        });
     }
 
-    private void startRequest(){
+    private void startRequest() {
+        pass = etPass.getText().toString().replaceAll("\\s","");
+        pass2 = etPass2.getText().toString().replaceAll("\\s","");
+        username = etUsername.getText().toString().replaceAll("\\s","");
+        name = etName.getText().toString().replaceAll("\\s","");
+        if (!pass.equals(pass2)) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Jelszóegyezési hiba!")
+                    .setMessage("A két jelszó nem egyezik. Próbáld újra!")
+                    .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+            etPass.setText("");
+            etPass2.setText("");
+            return;
+        }
+        if (pass.equals("") || pass2.equals("") || username.equals("") || name.equals("")) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Kitöltési hiba!")
+                    .setMessage("Kérlek tölts ki minden mezőt és próbáld újra!")
+                    .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+            return;
+        }
         StringRequest postRequest = new StringRequest(Request.Method.POST, urlRegister,
-                response ->{
-                    if(response.length()>1000){
-                    }
-                }
-                        ,
+                response -> new AlertDialog.Builder(this)
+                        .setMessage("Sikeres regisztráció!")
+                        .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                            Intent intent = new Intent(this, LoginActivity.class);
+                            startActivity(intent);
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show()
+                ,
                 error -> {
-                    if(error!=null){
+                    if (error != null) {
                         new AlertDialog.Builder(this)
-                                .setTitle("ddd")
-                                .setMessage((CharSequence) error)
+                                .setTitle("Hiba!")
+                                .setMessage(error.getMessage())
                                 .setPositiveButton(android.R.string.yes, (dialog, which) -> {
                                 })
                                 .setIcon(android.R.drawable.ic_dialog_alert)
@@ -79,19 +93,15 @@ public class RegisterActivity extends AppCompatActivity {
                 }
         ) {
             @Override
-            protected Map<String, String> getParams()
-            {
-                Map<String, String>  params = new HashMap<>();
-                params.put("username",etUsername.getText().toString());
-                params.put("password",etPass.getText().toString());
-                params.put("name",etName.getText().toString());
-                params.put("birthdate",etBirthdate.getText().toString());
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("username", etUsername.getText().toString());
+                params.put("password", etPass.getText().toString());
+                params.put("name", etName.getText().toString());
 
                 return params;
             }
         };
         queue.add(postRequest);
-        Intent intent=new Intent(this,LoginActivity.class);
-        startActivity(intent);
     }
 }

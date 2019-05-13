@@ -73,20 +73,6 @@
             android:ems="10"
             android:inputType="textPersonName" />
 
-        <TextView
-            android:id="@+id/textView8"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Születési dátum"
-            android:textSize="24sp" />
-
-        <EditText
-            android:id="@+id/etRegisterBirthdate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="date" />
-
         <Button
             android:id="@+id/btnRegisterFinal"
             android:layout_width="match_parent"

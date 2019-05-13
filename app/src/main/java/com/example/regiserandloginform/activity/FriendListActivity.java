@@ -86,8 +86,7 @@ public class FriendListActivity extends AppCompatActivity {
                     long user2_id=jsonObject.getLong("user_id");
                     String username=jsonObject.getString("username");
                     String real_name=jsonObject.getString("name");
-                    String birthdate=jsonObject.getString("birthdate");
-                    User user=new User(user2_id,username,real_name,birthdate);
+                    User user=new User(user2_id,username,real_name);
                     TextView textView=new TextView(this);
                     if (jsonObject.getInt("isapproved")==1){
                         layoutFriends.addView(textView);
@@ -100,7 +99,7 @@ public class FriendListActivity extends AppCompatActivity {
                     else {
                         layoutFriends.addView(textView);
                         textView.setText(user.toString()+"\n\n Ez a felhasználó barátnak jelölt. " +
-                                "Elfogadáshoz tegye legalább két ujját a címkére!");
+                                "Elfogadáshoz tarsd hosszan lenyomva a címkét!");
                         textView.setPadding(0,40,0,40);
                         textView.setTextColor(Color.parseColor("#000000"));
                         textView.setBackgroundResource(R.drawable.xflareone);
@@ -137,17 +136,20 @@ public class FriendListActivity extends AppCompatActivity {
                                     }
                                 };
                                 AlertDialog.Builder builder = new AlertDialog.Builder(FriendListActivity.this);
-                                builder.setMessage("Elfogadod, vagy elutasítod a felkérést?").setPositiveButton("Igen", dialogClickListener)
-                                        .setNegativeButton("Nem", dialogClickListener).setNeutralButton("Mégse",dialogClickListener).show();
+                                builder.setMessage("Elfogadod, vagy elutasítod a felkérést?").setPositiveButton("Elfogadom", dialogClickListener)
+                                        .setNegativeButton("Elutasítom", dialogClickListener).setNeutralButton("Mégse",dialogClickListener).show();
                             }
                         });
                         textView.setOnTouchListener((v, event) -> {
-                            switch(event.getAction() & MotionEvent.ACTION_MASK){
-                                case MotionEvent.ACTION_POINTER_DOWN:
+                            switch(event.getAction()){
+                                case MotionEvent.ACTION_DOWN:
                                     textView.setAnimation(textClick);
                                     textView.startAnimation(textClick);
                                     break;
-                                case MotionEvent.ACTION_POINTER_UP:
+                                case MotionEvent.ACTION_CANCEL:
+                                    textView.clearAnimation();
+                                    break;
+                                case MotionEvent.ACTION_UP:
                                     textView.clearAnimation();
                                     break;
                             }
@@ -160,10 +162,12 @@ public class FriendListActivity extends AppCompatActivity {
                 }
             }
         }, error -> {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage(error.getMessage())
-                    .setNegativeButton("Retry", null)
-                    .create()
+            new AlertDialog.Builder(this)
+                    .setMessage("Még nincsenek barátaid. A \"BARÁT HOZZÁADÁSA\" gomb megnyomásával kérelmet" +
+                            " küldhetsz egy felhasználó felé. Ha elfogadja megjelenik a barátaid között.")
+                    .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
         });
         queue.add(jsonArrayRequest);

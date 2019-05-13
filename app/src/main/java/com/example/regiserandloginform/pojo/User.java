@@ -6,18 +6,16 @@ public class User implements Serializable {
     private long user_id;
     private String username;
     private String real_name;
-    private String birth_date;
 
     public User(long user_id,String username){
         this.user_id=user_id;
         this.username=username;
     }
 
-    public User(long user_id, String username, String real_name, String birth_date) {
+    public User(long user_id, String username, String real_name) {
         this.user_id = user_id;
         this.username = username;
         this.real_name = real_name;
-        this.birth_date = birth_date;
     }
 
     public String getUsername() {
@@ -37,8 +35,7 @@ public class User implements Serializable {
         if(real_name!=null){
             return "Felhasználói azonosító:\n"+user_id+
                     "\nFelhasználónév:\n"+username+
-                    "\nNév:\n"+real_name+
-                    "\nSzületési dátum:\n"+birth_date;
+                    "\nValódi név:\n"+real_name;
         }
         else {
             return "Felhasználói azonosító:\n"+user_id+

@@ -19,7 +19,7 @@
         {
         $response[$i] = [];
     
-        $stmt->bind_result($response[$i]['user_id'],$response[$i]['username'],$response[$i]['password'],$response[$i]['name'],$response[$i]['birthdate'],$response[$i]['isapproved']);
+        $stmt->bind_result($response[$i]['user_id'],$response[$i]['username'],$response[$i]['password'],$response[$i]['name'],$response[$i]['isapproved']);
     
         $stmt->fetch();
         }
