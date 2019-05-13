@@ -1,6 +1,8 @@
 package com.example.regiserandloginform.activity;
 
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -19,6 +21,10 @@ import com.example.regiserandloginform.pojo.User;
 import com.google.android.gms.maps.model.LatLng;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 public class EventListActivity extends AppCompatActivity {
 
@@ -58,21 +64,32 @@ public class EventListActivity extends AppCompatActivity {
                 Event event=new Event(date,message);
                 PointerLocation location=new PointerLocation(latitude,longitude);
                 EventInfo info=new EventInfo(user,event,location);
-                TextView textView = new TextView(this);
-                layoutEvents.addView(textView);
-                textView.setText(info.toString());
-                textView.setPadding(0,40,0,40);
-                textView.setTextColor(Color.parseColor("#ffffff"));
-                textView.setBackgroundResource(R.drawable.rainbow_blue);
-                textView.setGravity(Gravity.CENTER|Gravity.CENTER);
-                LatLng latLng=new LatLng(latitude,longitude);
-                MapFragment.friendPointer(latLng,username,message);
-                } catch (JSONException e) {
+                textviewAndPointer(info,latitude,longitude,username,message);
+                } catch (JSONException | IOException e) {
                     e.printStackTrace();
                 }
             }
         }, error -> {
         });
         queue.add(jsonArrayRequest);
+    }
+
+    private void textviewAndPointer(EventInfo info,double latitude,double longitude,String username,String message) throws IOException {
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+
+        List<Address> addresses  = geocoder.getFromLocation(latitude,longitude, 1);
+
+        String city = addresses.get(0).getLocality();
+        String country = addresses.get(0).getCountryName();
+
+        TextView textView = new TextView(this);
+        layoutEvents.addView(textView);
+        textView.setText(info.toString()+"\n"+city+"\n"+country);
+        textView.setPadding(0,40,0,40);
+        textView.setTextColor(Color.parseColor("#ffffff"));
+        textView.setBackgroundResource(R.drawable.rainbow_blue);
+        textView.setGravity(Gravity.CENTER|Gravity.CENTER);
+        LatLng latLng=new LatLng(latitude,longitude);
+        MapFragment.friendPointer(latLng,username,message);
     }
 }

@@ -5,7 +5,7 @@
     
         $user_id=$_GET["user_id"];
     
-        $stmt = mysqli_prepare($connect, "Select e.user_id,u.username,e.date,e.message,l.latitude,l.longitude from friendship f, user u, `event` e, location l where f.user1_id = ? and f.user2_id = u.user_id AND f.user2_id=e.user_id OR f.user2_id = ? and f.user1_id=u.user_id AND f.user1_id=e.user_id AND f.isapproved=1 GROUP by u.username");
+        $stmt = mysqli_prepare($connect, "Select e.user_id,u.username,e.date,e.message,l.latitude,l.longitude from friendship f, user u, `event` e, location l where f.user1_id = ? and f.user2_id = u.user_id AND f.user2_id=e.user_id AND l.location_id=e.location_id OR f.user2_id = ? and f.user1_id=u.user_id AND f.user1_id=e.user_id AND f.isapproved=1 AND l.location_id=e.location_id");
         
         $stmt->bind_param('ii',$user_id,$user_id);
         $stmt->execute();

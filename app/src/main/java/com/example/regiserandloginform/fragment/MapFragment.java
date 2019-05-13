@@ -138,11 +138,11 @@ public class MapFragment extends SupportMapFragment
     }
 
     public static void friendPointer(LatLng friendsLocation,String username,String message){
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(friendsLocation);
-        markerOptions.title(username).snippet(message);
-        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_mymarker));
-        friendlyMarker = googleMap.addMarker(markerOptions);
+        MarkerOptions friendlyMarkerOptions = new MarkerOptions();
+        friendlyMarkerOptions.position(friendsLocation);
+        friendlyMarkerOptions.title(username).snippet(message);
+        friendlyMarkerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_mymarker));
+        friendlyMarker = googleMap.addMarker(friendlyMarkerOptions);
     }
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;

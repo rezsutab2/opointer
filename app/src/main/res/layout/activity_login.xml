@@ -12,8 +12,8 @@
 
     <LinearLayout
         android:id="@+id/login_layout_panel"
-        android:layout_width="320dp"
-        android:layout_height="427dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

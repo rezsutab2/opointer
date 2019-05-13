@@ -8,7 +8,7 @@ public class EventInfo {
     public EventInfo(User user, Event event, PointerLocation location) {
         this.user = user;
         this.event = event;
-        this.location = location;
+        this.location=location;
     }
 
     public User getUser() {
@@ -19,7 +19,7 @@ public class EventInfo {
         return event;
     }
 
-    public PointerLocation getLocation() {
+    public PointerLocation getLocation(){
         return location;
     }
 
@@ -27,6 +27,6 @@ public class EventInfo {
     public String toString() {
         return "\nFelhasználónév:\n"+getUser().getUsername()+
                 "\nLeírás:\n"+getEvent().getMessage()+
-                "\nItt:\n"+getLocation().getLatitude()+"/"+getLocation().getLongitude();
+                "\nItt:\n"+getLocation().toString();
     }
 }
